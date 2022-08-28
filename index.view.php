@@ -8,13 +8,7 @@
 </head>
 <body>
     <div>
-    <form action='register.php' method='post'>
-        <h1>REGISTER</h1>
-        <input required='required' type='email' name='email' placeholder='Email'>
-        <br/>
-        <input required='required' type='password' name='password' placeholder='Password'>
-        <button name='submit' type='submit'>register</button>
-    </form>
+    
     </div>
     <style>
         body{
