@@ -2,7 +2,7 @@
     session_start();
     define('BASEPATH', true);
     ini_set('error_reporting', E_ALL);
-    require 'config/dbFunctions.php';
+    require 'controller/dbFunctions.php';
     require 'index.view.php';
 
     echo "<h1>LOGIN</h1><br/><form action='index.php' method='post'><input type='email' name='email' placeholder='E Mail'><br/><input type='password' name='password' placeholder='Password'><br/><button name='submit' type='submit'>sign in</button> </form>"  ;

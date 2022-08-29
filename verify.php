@@ -1,9 +1,11 @@
 <?php
     session_start();
     define('BASEPATH', true);
-    require 'index.view.php';
     ini_set('error_reporting', E_ALL);
-    require 'config/dbFunctions.php';
+    require 'controller/dbFunctions.php';
+    include 'index.view.php';
+
+    
     if(!isset($_SESSION['email'])){
         echo '<script>alert("Unauthenticated")</script>';
         echo '<script>window.location.replace("index.php");</script>';

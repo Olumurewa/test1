@@ -1,9 +1,11 @@
 <?php 
     define('BASEPATH', true); 
-    require 'index.view.php';
+    require 'controller/dbFunctions.php';
+    include 'index.view.php';
     ini_set('error_reporting', E_ALL);
-    require 'config/dbFunctions.php';
+
     echo "<form action='register.php' method='post'><h1>REGISTER</h1><input required='required' type='email' name='email' placeholder='Email'><br/><input required='required' type='password' name='password' placeholder='Password'><button name='submit' type='submit'>register</button></form>";
+    
     if(isset($_POST['submit'])){  
             try 
             {
