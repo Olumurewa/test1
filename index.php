@@ -1,13 +1,14 @@
  <?php 
     session_start();
     define('BASEPATH', true);
-    ini_set('error_reporting', E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
     require 'controller/dbFunctions.php';
     require 'index.view.php';
 
     echo "hello world";
     if(isset($_POST['submit'])){  
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
         $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
 

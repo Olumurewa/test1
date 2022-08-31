@@ -1,6 +1,4 @@
 <?php
-
-session_start();
 require 'config/db.php';
 
 class dbFunction{
@@ -14,22 +12,30 @@ class dbFunction{
 
     public function Register($email, $pass, $isVerified)
     {
-        $db = new DbConn();
-        $stmt = $db->conn->prepare("INSERT INTO `users` (email, password, isVerified) 
-                    VALUES (:email, :password,:isVerified)");
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $pass);
-        $stmt->bindParam(':isVerified', $isVerified);
-        echo '<script>alert("An error occurred")</script>';
-        $stmt->execute();
-        if($stmt->execute()){
-            echo '<script>alert("New account created: ")</script>';
-            echo '<script>window.location.replace("index.php")</script>';
-            
-        }else{
-            echo '<script>alert("An error occurred")</script>';
+        try {
+            $db = new DbConn();
+            $sql = "INSERT INTO `users` (email, password, isVerified) VALUES (:email, :password,:isVerified)";
+            $stmt = $db->connect()->conn;
+            $stmt->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password', $pass);
+            $stmt->bindParam(':isVerified', $isVerified);
+           
+            $stmt->execute();
+            if($stmt->execute()){
+                echo '<script>alert("New account created: ")</script>';
+                echo '<script>window.location.replace("index.php")</script>';
+                
+            }else{
+                echo '<script>alert("An error occurred")</script>';
+            }
+            return true;
+        }catch(PDOException $e)
+        {
+            $error = "Error: " . $e->getMessage();
+            echo '<script type="text/javascript">alert("'.$error.'");</script>';
         }
-        return true;
+        
     }
     /**
      * Function to generate OTP
@@ -68,7 +74,7 @@ class dbFunction{
     {
         $db = new DbConn();
         $sql = "SELECT * FROM `users` WHERE email = :email";
-        $stmt = $db->conn->prepare($sql);
+        $stmt = $db->connect()->conn->prepare($sql);
         $stmt->bindValue(':email', $email);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -95,11 +101,11 @@ class dbFunction{
     }
 
 
-    public function destroy($otp){
-        require 'config/db.php';
+    public function destroy($otp)
+    {
+        $db = new DbConn();
         $sql = "DELETE FROM `otp` WHERE otp = :otp";
-
-        $stmt = $conn->prepare($sql);
+        $stmt = $db->conn->prepare($sql);
         $stmt->bindValue(':otp', $otp);
  
         if ($stmt->execute())
@@ -107,6 +113,8 @@ class dbFunction{
             echo '<script>alert("congratulations!")</script>';
         }
     }
+
+
 
     public function verify($otp)
     {
