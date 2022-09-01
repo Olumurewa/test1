@@ -12,8 +12,14 @@
     }
     echo "<form method='post' action='verify.php'><input type='text' name='token' placeholder='OTP'><br/><button name='submit' type='submit'>sign in</button> </form>";
     
-    $func = new dbFunction();
-    $func->verify($otp);
+    if(isset($_POST['submit'])){  
+        $otp = !empty($_POST['token']) ? trim($_POST['token']) : null;
+        $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
+        
+        $func = new dbFunction();
+        $func->verify($otp);
+    }
+    
     
       
 

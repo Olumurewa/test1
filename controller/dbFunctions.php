@@ -3,6 +3,8 @@ require 'config/db.php';
 
 class dbFunction{
 
+    public $user;
+
     /**
      * Function for user registeration
      * @param string $email
@@ -15,14 +17,13 @@ class dbFunction{
         try {
             $db = new DbConn();
             $sql = "INSERT INTO `users` (email, password, isVerified) VALUES (:email, :password,:isVerified)";
-            $stmt = $db->connect()->conn;
-            $stmt->prepare($sql);
+            $stmt = $db->conn->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $pass);
             $stmt->bindParam(':isVerified', $isVerified);
            
             $stmt->execute();
-            if($stmt->execute()){
+            if($stmt){
                 echo '<script>alert("New account created: ")</script>';
                 echo '<script>window.location.replace("index.php")</script>';
                 
@@ -52,6 +53,7 @@ class dbFunction{
             $otpstore = $db->conn->prepare("INSERT INTO `otp` (otp, isExpired, userID) 
             VALUES ($otp,$isExpired,$userID)");
             $otpstore->execute();
+            
             echo '<script type="text/javascript">alert("COPY: '.$otp.'");</script>';
             echo '<script>window.location.replace("verify.php");</script>';
         }
@@ -74,7 +76,7 @@ class dbFunction{
     {
         $db = new DbConn();
         $sql = "SELECT * FROM `users` WHERE email = :email";
-        $stmt = $db->connect()->conn->prepare($sql);
+        $stmt = $db->conn->prepare($sql);
         $stmt->bindValue(':email', $email);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -123,11 +125,12 @@ class dbFunction{
         $stmt = $db->conn->prepare($sql);
         $stmt->bindValue(':otp', $otp);
         $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        $id = $_SESSION['user'];
-        if (isset($id)){
-            if($user['userID'] === $id)
+        $stmt->fetch(PDO::FETCH_ASSOC);
+        // $id = $_SESSION['userID'];
+        // $OtpID =$stmt['userID'];
+            if($stmt)
             {
+                $_SESSION['otp']=$otp;
                 dbFunction::destroy($otp);  
             } 
             else 
@@ -137,7 +140,7 @@ class dbFunction{
                 echo '<script>window.location.replace("index.php");</script>';
     
             }
-        }
+        
     }
 
     
