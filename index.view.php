@@ -8,26 +8,48 @@
 </head>
 <body>
     <div>
-        <ul>
-            <li><a href='login.php'>LOGIN</a></li>
-            <li><a href='register.php'>REGISTER</a></li>
+        <nav>
+            <ul>
+                <li><a href='login.php'>LOGIN</a></li>
 
-        </ul>
+                <li class='list-item'><a href='register.php'>REGISTER</a></li>
 
-        <?php
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-        ?>
-    
+            </ul>
+        </nav>
+
     </div>
     <style>
-        body{
-            padding: 0.5rem;
-            background-color: skyblue;
-            justify-content: center;
-
+        nav{
+            display: flex;
+            flex-direction: row;
+            text-decoration: none;
+            background-color: pink;
+            justify-content: space-evenly;
         }
+        li{
+            display: inline;
+            list-style: none;
+            text-decoration: none;
+            color: white;
+        }
+        .list-item{
+            padding-left: 3rem;
+        }
+        a{
+            color:black;
+            text-decoration: none !important; 
+        }
+        a:hover{
+            color: aliceblue;
+            text-decoration: wavy;
+        }
+        .elevate {
+            background: #ffffff;
+            box-shadow: 0px 0px 20px -3px rgba(0, 0, 0, 0.12);
+            padding: 7%;
+        }
+
+
     </style>
 </body>
 

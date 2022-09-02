@@ -3,8 +3,6 @@ require 'config/db.php';
 
 class dbFunction{
 
-    public $user;
-
     /**
      * Function for user registeration
      * @param string $email
@@ -25,7 +23,7 @@ class dbFunction{
             $stmt->execute();
             if($stmt){
                 echo '<script>alert("New account created: ")</script>';
-                echo '<script>window.location.replace("index.php")</script>';
+                echo '<script>window.location.replace("login.php")</script>';
                 
             }else{
                 echo '<script>alert("An error occurred")</script>';
@@ -76,43 +74,56 @@ class dbFunction{
     {
         $db = new DbConn();
         $sql = "SELECT * FROM `users` WHERE email = :email";
-        $stmt = $db->conn->prepare($sql);
-        $stmt->bindValue(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if($user === false)
+        try{
+            $stmt = $db->conn->prepare($sql);
+            $stmt->bindValue(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($user === false)
+            {
+                echo '<script>alert("invalid email or password")</script>';
+            } 
+            else
+            {
+                $validPassword = password_verify($passwordAttempt, $user['password']);
+            }
+            if($validPassword)
+            {
+                $_SESSION['email'] = $email;
+                $_SESSION['userID'] = $user['userID'];
+                dbFunction::OtpGenerator($user['userID']);
+                echo '<script>window.location.replace("verify.php");</script>';
+                exit; 
+            } 
+            else
+            {
+                echo '<script>alert("invalid username or password")</script>';
+            }
+        }catch(PDOException $e) 
         {
-            echo '<script>alert("invalid email or password")</script>';
-        } 
-        else
-        {
-            $validPassword = password_verify($passwordAttempt, $user['password']);
+            $error = "Error: " . $e->getMessage();
+            echo '<script type="text/javascript">alert("'.$error.'");</script>';
         }
-        if($validPassword)
-        {
-            $_SESSION['email'] = $email;
-            $_SESSION['userID'] = $user['userID'];
-            dbFunction::OtpGenerator($user['userID']);
-            echo '<script>window.location.replace("verify.php");</script>';
-            exit; 
-        } 
-        else
-        {
-            echo '<script>alert("invalid username or password")</script>';
-        }
+        
     }
 
 
     public function destroy($otp)
     {
         $db = new DbConn();
-        $sql = "DELETE FROM `otp` WHERE otp = :otp";
-        $stmt = $db->conn->prepare($sql);
-        $stmt->bindValue(':otp', $otp);
- 
-        if ($stmt->execute())
+        try{
+            $sql = "DELETE FROM `otp` WHERE otp = :otp";
+            $stmt = $db->conn->prepare($sql);
+            $stmt->bindValue(':otp', $otp);
+    
+            if ($stmt->execute())
+            {
+                echo '<script>alert("congratulations! You have logged in")</script>';
+            }
+        }catch(PDOException $e) 
         {
-            echo '<script>alert("congratulations!")</script>';
+            $error = "Error: " . $e->getMessage();
+            echo '<script type="text/javascript">alert("'.$error.'");</script>';
         }
     }
 
@@ -121,13 +132,13 @@ class dbFunction{
     public function verify($otp)
     {
         $db = new DbConn();
-        $sql = "SELECT * FROM `otp` WHERE otp = :otp";
-        $stmt = $db->conn->prepare($sql);
-        $stmt->bindValue(':otp', $otp);
-        $stmt->execute();
-        $stmt->fetch(PDO::FETCH_ASSOC);
-        // $id = $_SESSION['userID'];
-        // $OtpID =$stmt['userID'];
+        try
+        {
+            $sql = "SELECT * FROM `otp` WHERE otp = :otp";
+            $stmt = $db->conn->prepare($sql);
+            $stmt->bindValue(':otp', $otp);
+            $stmt->execute();
+            $stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt)
             {
                 $_SESSION['otp']=$otp;
@@ -138,8 +149,14 @@ class dbFunction{
                 session_destroy(); 
                 echo '<script>alert("Error!!!")</script>';
                 echo '<script>window.location.replace("index.php");</script>';
-    
+        
             }
+        }catch(PDOException $e) 
+        {
+            $error = "Error: " . $e->getMessage();
+            echo '<script type="text/javascript">alert("'.$error.'");</script>';
+        }
+        
         
     }
 
